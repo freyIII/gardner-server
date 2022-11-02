@@ -19,7 +19,10 @@ exports.getAllRoles = catchAsync(async (req, res, next) => {
     _tenantId: req.user._tenantId,
   };
 
-  const rolesQuery = new QueryFeatures(Role.find(initialQuery), filteredQuery)
+  const rolesQuery = new QueryFeatures(
+    Role.find(initialQuery).populate("_createdBy"),
+    filteredQuery
+  )
     .filter()
     .sort()
     .limitFields()
@@ -34,6 +37,16 @@ exports.getAllRoles = catchAsync(async (req, res, next) => {
     .count();
 
   const roles = await rolesQuery.query;
+  for (let role of roles) {
+    const nQueryFeature = new QueryFeatures(
+      User.find({ _role: role._id, status: { $ne: "Deleted" } }),
+      req.query
+    )
+      .filter()
+      .count();
+    const nUsers = await nQueryFeature.query;
+    role["nUsers"] = nUsers;
+  }
   const totalRoles = await countRoleQuery.query;
 
   res.status(200).json({

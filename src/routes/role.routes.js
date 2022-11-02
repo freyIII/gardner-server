@@ -13,6 +13,6 @@ router
 router
   .route("/:id")
   .put(roleController.updateRole)
-  .patch(roleController.deleteRole);
+  .delete(roleController.deleteRole);
 
 module.exports = router;
