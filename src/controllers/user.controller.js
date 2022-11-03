@@ -17,17 +17,23 @@ exports.createUser = catchAsync(async (req, res, next) => {
     "email",
     "mobileNumber",
     "type",
-    "password",
+    // "password",
     "_role",
-    "passwordConfirm",
+    // "passwordConfirm",
   ];
 
   const filteredBody = _.pick(req.body, pickFields);
+
   const existEmail = await User.findOne({ email: filteredBody.email });
 
   if (existEmail) return next(new AppError("Email already exist", 400));
+
+  const password = generateRandomPassword();
+  filteredBody.password = password;
+  filteredBody.passwordConfirm = password;
   filteredBody._tenantId = req.user._tenantId;
   filteredBody._createdBy = req.user._id;
+
   const user = await User.create(filteredBody);
 
   res.status(201).json({

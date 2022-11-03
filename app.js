@@ -4,6 +4,8 @@ const helmet = require("helmet");
 const app = express();
 const env = require("dotenv");
 const cors = require("cors");
+const sgMail = require("@sendgrid/mail");
+const config = require("./src/config/index");
 const authRouter = require("./src/routes/auth.routes");
 const userRouter = require("./src/routes/user.routes");
 const roomRouter = require("./src/routes/room.routes");
@@ -31,6 +33,7 @@ env.config();
 mongoose
   .connect(process.env.DATABASE)
   .then(() => console.log("Connected to DB"));
+sgMail.setApiKey(config.sendgrid);
 
 app.use(helmet());
 app.use(
