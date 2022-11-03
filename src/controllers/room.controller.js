@@ -7,13 +7,11 @@ const AppError = require("../utils/errors/AppError");
 const QueryFeatures = require("../utils/query/queryFeatures");
 
 exports.createRoom = catchAsync(async (req, res, next) => {
-  console.log(req.user);
   const pickFields = ["name", "type"];
 
   const filteredBody = _.pick(req.body, pickFields);
   filteredBody._tenantId = req.user._tenantId;
   filteredBody._createdBy = req.user._id;
-  // console.log(filteredBody);
   const room = await Room.create(filteredBody);
 
   res.status(201).json({

@@ -30,6 +30,10 @@ const SubjectSchema = new mongoose.Schema(
       enum: ["1st", "2nd"],
       required: [true, "Please provide semester"],
     },
+    nProfessors: {
+      type: Number,
+      default: 0,
+    },
     _tenantId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

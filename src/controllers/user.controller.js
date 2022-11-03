@@ -2,6 +2,7 @@ const _ = require("lodash");
 const { generateRandomPassword } = require("../utils/tokens");
 const mongoose = require("mongoose");
 const User = require("../models/user.model");
+const Role = require("../models/role.model");
 
 const catchAsync = require("../utils/errors/catchAsync");
 const AppError = require("../utils/errors/AppError");
@@ -58,12 +59,21 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
     .filter()
     .count();
 
+  const nRoleQueryFeature = new QueryFeatures(
+    Role.find({ status: { $ne: "Deleted" }, _tenantId: req.user._tenantId }),
+    req.query
+  )
+    .filter()
+    .count();
+
   const users = await queryFeature.query;
   const nUsers = await nQueryFeature.query;
+  const nRoles = await nRoleQueryFeature.query;
 
   res.status(200).json({
     status: "success",
     total_docs: nUsers,
+    total_roles: nRoles,
     env: {
       users,
     },

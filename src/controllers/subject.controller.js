@@ -1,6 +1,7 @@
 const _ = require("lodash");
 const mongoose = require("mongoose");
 const Subject = require("../models/subject.model");
+const Professor = require("../models/professor.model");
 
 const catchAsync = require("../utils/errors/catchAsync");
 const AppError = require("../utils/errors/AppError");
@@ -23,7 +24,7 @@ exports.createSubject = catchAsync(async (req, res, next) => {
 
   filteredBody._tenantId = req.user._tenantId;
   filteredBody._createdBy = req.user._id;
-  // console.log(filteredBody);
+
   const subject = await Subject.create(filteredBody);
 
   res.status(201).json({
@@ -52,6 +53,22 @@ exports.getAllSubjects = catchAsync(async (req, res, next) => {
     .count();
 
   const subjects = await queryFeature.query;
+
+  for (let subject of subjects) {
+    const nQueryFeature = new QueryFeatures(
+      Professor.find({
+        _subjects: { $eq: subject },
+        status: { $ne: "Deleted" },
+      }),
+      req.query
+    )
+      .filter()
+      .count();
+    const nProfessors = await nQueryFeature.query;
+
+    subject["nProfessors"] = nProfessors;
+  }
+
   const nSubjects = await nQueryFeature.query;
 
   res.status(200).json({
@@ -117,6 +134,13 @@ exports.deleteSubject = catchAsync(async (req, res, next) => {
   const subject = await Subject.findOne(initialQuery);
 
   if (!subject) return next(new AppError("Subject not Found", 404));
+
+  const professor = await Professor.findOne({
+    status: "Active",
+    _subjects: { $eq: subject._id },
+    _tenantId: req.user._tenantId,
+  });
+  if (professor) return next(new AppError("Active professor found!", 401));
 
   subject.status = "Deleted";
 

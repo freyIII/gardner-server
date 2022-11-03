@@ -1,6 +1,7 @@
 const _ = require("lodash");
 const mongoose = require("mongoose");
 const Strand = require("../models/strand.model");
+const Subject = require("../models/subject.model");
 
 const catchAsync = require("../utils/errors/catchAsync");
 const AppError = require("../utils/errors/AppError");
@@ -16,7 +17,6 @@ exports.createStrand = catchAsync(async (req, res, next) => {
 
   filteredBody._tenantId = req.user._tenantId;
   filteredBody._createdBy = req.user._id;
-  // console.log(filteredBody);
   const strand = await Strand.create(filteredBody);
 
   res.status(201).json({
@@ -47,12 +47,21 @@ exports.getAllStrands = catchAsync(async (req, res, next) => {
     .filter()
     .count();
 
+  const nSubjectQueryFeature = new QueryFeatures(
+    Subject.find(initialQuery),
+    req.query
+  )
+    .filter()
+    .count();
+
   const strands = await queryFeature.query;
   const nStrands = await nQueryFeature.query;
+  const nSubjects = await nSubjectQueryFeature.query;
 
   res.status(200).json({
     status: "success",
     total_docs: nStrands,
+    total_subjects: nSubjects,
     env: {
       strands,
     },

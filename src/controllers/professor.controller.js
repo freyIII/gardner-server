@@ -1,6 +1,7 @@
 const _ = require("lodash");
 const mongoose = require("mongoose");
 const Professor = require("../models/professor.model");
+const Subject = require("../models/subject.model");
 
 const catchAsync = require("../utils/errors/catchAsync");
 const AppError = require("../utils/errors/AppError");
@@ -55,12 +56,21 @@ exports.getAllProfessors = catchAsync(async (req, res, next) => {
     .filter()
     .count();
 
+  const nSubjectQueryFeature = new QueryFeatures(
+    Subject.find(initialQuery),
+    req.query
+  )
+    .filter()
+    .count();
+
   const professors = await queryFeature.query;
   const nProfessors = await nQueryFeature.query;
+  const nSubjects = await nSubjectQueryFeature.query;
 
   res.status(200).json({
     status: "success",
     total_docs: nProfessors,
+    total_subjects: nSubjects,
     env: {
       professors,
     },
