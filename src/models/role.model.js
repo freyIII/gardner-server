@@ -32,10 +32,6 @@ const RoleSchema = new mongoose.Schema(
       enum: ["Active", "Deleted"],
       default: "Active",
     },
-    _lguId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
     _tenantId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

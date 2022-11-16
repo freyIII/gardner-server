@@ -44,7 +44,7 @@ exports.login = catchAsync(async (req, res, next) => {
 });
 
 exports.me = catchAsync(async (req, res, next) => {
-  const user = await req.user;
+  const user = await User.findById(req.user._id).populate("_role");
 
   res.status(200).json({
     status: "success",
@@ -95,6 +95,7 @@ exports.authenticate = catchAsync(async (req, res, next) => {
 });
 
 exports.updatePassword = catchAsync(async (req, res, next) => {
+  console.log("here");
   const { currentPassword, newPassword, confirmNewPassword } = req.body;
 
   if (!currentPassword)

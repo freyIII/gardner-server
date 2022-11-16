@@ -89,13 +89,15 @@ exports.updateSubject = catchAsync(async (req, res, next) => {
     "yearLevel",
     "semester",
   ];
-
+  const { id } = req.params;
   const filteredBody = _.pick(req.body, pickFields);
 
-  const existCode = await Subject.findOne({ code: filteredBody.code });
+  const existCode = await Subject.findOne({
+    _id: { $ne: id },
+    code: filteredBody.code,
+  });
   if (existCode) return next(new AppError("Code already exist", 400));
 
-  const { id } = req.params;
   const initialQuery = {
     _id: id,
     status: { $ne: "Deleted" },
