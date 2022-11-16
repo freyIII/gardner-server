@@ -95,7 +95,6 @@ exports.authenticate = catchAsync(async (req, res, next) => {
 });
 
 exports.updatePassword = catchAsync(async (req, res, next) => {
-  console.log("here");
   const { currentPassword, newPassword, confirmNewPassword } = req.body;
 
   if (!currentPassword)

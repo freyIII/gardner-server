@@ -83,7 +83,10 @@ exports.updateStrand = catchAsync(async (req, res, next) => {
   const strand = await Strand.findOne(initialQuery);
   if (!strand) return next(new AppError("Strand not found", 400));
 
-  const existCode = await Strand.findOne({ code: filteredBody.code });
+  const existCode = await Strand.findOne({
+    _id: { $ne: id },
+    code: filteredBody.code,
+  });
   if (existCode) return next(new AppError("Code already exist", 400));
 
   const updatedStrand = await Strand.findOneAndUpdate(

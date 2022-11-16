@@ -34,6 +34,10 @@ const SubjectSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    nStrands: {
+      type: Number,
+      default: 0,
+    },
     _tenantId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

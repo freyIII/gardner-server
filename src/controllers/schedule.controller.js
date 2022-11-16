@@ -18,6 +18,11 @@ exports.createSchedule = catchAsync(async (req, res, next) => {
 
   const filteredBody = _.pick(req.body, pickFields);
 
+  if (!filteredBody.name && !filteredBody._room)
+    return next(new AppError("Name and Room is required", 400));
+  if (!filteredBody.name) return next(new AppError("Name is required", 400));
+  if (!filteredBody._room) return next(new AppError("Room is required", 400));
+
   filteredBody._tenantId = req.user._tenantId;
   filteredBody._createdBy = req.user._id;
 
