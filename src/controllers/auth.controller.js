@@ -148,7 +148,7 @@ const mailResetToken = async (user, resetToken) => {
   if (process.env.NODE_ENV === "test") return;
 
   try {
-    const resetLink = `https://gardner-scheduling.netlify.app/reset-password/${resetToken}`;
+    const resetLink = `https://gardner-scheduling.herokuapp.com/reset-password/${resetToken}`;
     // const resetLink = `https://localhost:4200/reset-password/${resetToken}`;
     const validityDate = new Date(Date.now() + 10 * 60 * 1000).toLocaleString();
 
