@@ -62,7 +62,7 @@ app.use("/api/v1/schedule", scheduleRouter);
 app.use("/api/v1/role", roleRouter);
 
 app.listen(process.env.PORT, () => {
-  console.log(`server is running at port ${process.env.PORT}`);
+  // console.log(`server is running at port ${process.env.PORT}`);
 });
 
 app.use(errorController);
